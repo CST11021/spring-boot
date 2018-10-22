@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-parent</artifactId>
-		<version>${revision}</version>
+		<version>2.1.0.M4</version>
 		<relativePath>../spring-boot-parent</relativePath>
 	</parent>
 	<artifactId>spring-boot-docs</artifactId>
@@ -34,12 +34,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-cli</artifactId>
-			<version>${revision}</version>
+			<version>2.1.0.M4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starters</artifactId>
-			<version>${revision}</version>
+			<version>2.1.0.M4</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
@@ -979,7 +979,7 @@
 										<artifactItem>
 											<groupId>org.springframework.boot</groupId>
 											<artifactId>spring-boot-starters</artifactId>
-											<version>${revision}</version>
+											<version>2.1.0.M4</version>
 											<type>pom</type>
 											<overWrite>true</overWrite>
 											<outputDirectory>${project.build.directory}/external-resources</outputDirectory>
@@ -999,7 +999,7 @@
 										<artifactItem>
 											<groupId>org.springframework.boot</groupId>
 											<artifactId>spring-boot-maven-plugin</artifactId>
-											<version>${revision}</version>
+											<version>2.1.0.M4</version>
 											<classifier>site</classifier>
 											<type>jar</type>
 											<outputDirectory>
@@ -1010,7 +1010,7 @@
 										<artifactItem>
 											<groupId>org.springframework.boot</groupId>
 											<artifactId>spring-boot-gradle-plugin</artifactId>
-											<version>${revision}</version>
+											<version>2.1.0.M4</version>
 											<classifier>docs</classifier>
 											<type>zip</type>
 											<outputDirectory>${project.build.directory}/contents/gradle-plugin</outputDirectory>
@@ -1019,7 +1019,7 @@
 										<artifactItem>
 											<groupId>org.springframework.boot</groupId>
 											<artifactId>spring-boot-actuator-autoconfigure</artifactId>
-											<version>${revision}</version>
+											<version>2.1.0.M4</version>
 											<classifier>docs</classifier>
 											<type>zip</type>
 											<outputDirectory>${project.build.directory}/contents/actuator-api</outputDirectory>
@@ -1039,7 +1039,7 @@
 										<artifactItem>
 											<groupId>org.springframework.boot</groupId>
 											<artifactId>spring-boot-dependencies</artifactId>
-											<version>${revision}</version>
+											<version>2.1.0.M4</version>
 											<type>effective-pom</type>
 											<overWrite>true</overWrite>
 											<outputDirectory>${project.build.directory}/external-resources</outputDirectory>
@@ -1059,7 +1059,7 @@
 										<artifactItem>
 											<groupId>org.springframework.boot</groupId>
 											<artifactId>spring-boot-autoconfigure</artifactId>
-											<version>${revision}</version>
+											<version>2.1.0.M4</version>
 											<outputDirectory>
 												${project.build.directory}/auto-config/spring-boot-autoconfigure
 											</outputDirectory>
@@ -1068,7 +1068,7 @@
 										<artifactItem>
 											<groupId>org.springframework.boot</groupId>
 											<artifactId>spring-boot-actuator-autoconfigure</artifactId>
-											<version>${revision}</version>
+											<version>2.1.0.M4</version>
 											<outputDirectory>
 												${project.build.directory}/auto-config/spring-boot-actuator-autoconfigure
 											</outputDirectory>
@@ -1088,7 +1088,7 @@
 										<artifactItem>
 											<groupId>org.springframework.boot</groupId>
 											<artifactId>spring-boot-starters</artifactId>
-											<version>${revision}</version>
+											<version>2.1.0.M4</version>
 											<type>zip</type>
 											<classifier>starter-poms</classifier>
 											<outputDirectory>${project.build.directory}/external-resources/starter-poms</outputDirectory>
@@ -1107,7 +1107,7 @@
 										<artifactItem>
 											<groupId>org.springframework.boot</groupId>
 											<artifactId>spring-boot-test-autoconfigure</artifactId>
-											<version>${revision}</version>
+											<version>2.1.0.M4</version>
 											<outputDirectory>
 												${project.build.directory}/test-auto-config
 											</outputDirectory>
