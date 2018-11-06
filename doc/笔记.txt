@@ -1,0 +1,6 @@
+
+
+
+1、添加了Spring-boot-starter-web依赖，会自动添加Tomcat和Spring MVC的依赖，那么Spring Boot会对Tomcat和Spring MVC进行自动配置。
+
+

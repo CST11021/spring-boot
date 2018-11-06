@@ -33,6 +33,9 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.core.annotation.AliasFor;
 
 /**
+ *
+ * SpringBootApplication注解实际上组合了@Configuration、@EnableAutoConfiguration、@ComponentScan三个注解的功能。
+ *
  * Indicates a {@link Configuration configuration} class that declares one or more
  * {@link Bean @Bean} methods and also triggers {@link EnableAutoConfiguration
  * auto-configuration} and {@link ComponentScan component scanning}. This is a convenience
@@ -55,6 +58,8 @@ import org.springframework.core.annotation.AliasFor;
 public @interface SpringBootApplication {
 
 	/**
+	 * 关闭特定的自动配置类，使用该属性后，对应的spring Configuration类的配置不会生效
+	 *
 	 * Exclude specific auto-configuration classes such that they will never be applied.
 	 * @return the classes to exclude
 	 */
@@ -62,8 +67,7 @@ public @interface SpringBootApplication {
 	Class<?>[] exclude() default {};
 
 	/**
-	 * Exclude specific auto-configuration class names such that they will never be
-	 * applied.
+	 * Exclude specific auto-configuration class names such that they will never be applied.
 	 * @return the class names to exclude
 	 * @since 1.3.0
 	 */
