@@ -440,6 +440,15 @@ public class SpringApplication {
 		return getSpringFactoriesInstances(type, new Class<?>[]{});
 	}
 
+	/**
+	 * 根据spring.factories配置创建Bean实例
+	 *
+	 * @param type				创建的实例必须是该type的实例
+	 * @param parameterTypes	构造器参数类型
+	 * @param args				创建实例时所需要的构造器参数
+	 * @param <T>
+	 * @return
+	 */
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		// Use names and ensure unique to protect against duplicates
@@ -449,6 +458,17 @@ public class SpringApplication {
 		return instances;
 	}
 
+	/**
+	 * 创建Bean实例
+	 *
+	 * @param type				创建的实例必须是该type的实例
+	 * @param parameterTypes	构造器参数类型
+	 * @param classLoader		类加载器
+	 * @param args				创建实例时所需要的构造器参数
+	 * @param names				表示要创建的类的全限定类名，该类名来自spring.factories配置文件
+	 * @param <T>
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, ClassLoader classLoader, Object[] args, Set<String> names) {
 		List<T> instances = new ArrayList<>(names.size());
