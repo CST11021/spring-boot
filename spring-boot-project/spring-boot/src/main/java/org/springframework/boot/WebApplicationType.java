@@ -26,20 +26,17 @@ package org.springframework.boot;
 public enum WebApplicationType {
 
 	/**
-	 * The application should not run as a web application and should not start an
-	 * embedded web server.
+	 * 不启动内嵌的WebServer，不是运行web application
 	 */
 	NONE,
 
 	/**
-	 * The application should run as a servlet-based web application and should start an
-	 * embedded servlet web server.
+	 * 启动内嵌的基于servlet的web server
 	 */
 	SERVLET,
 
 	/**
-	 * The application should run as a reactive web application and should start an
-	 * embedded reactive web server.
+	 * 启动内嵌的reactive web server，这个application是一个reactive web application
 	 */
 	REACTIVE
 
