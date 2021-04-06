@@ -305,14 +305,21 @@ public class SpringApplication {
 			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class, new Class[]{ConfigurableApplicationContext.class}, context);
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
 
+			// spring容器相关配置完成后，需要调用：ConfigurableApplicationContext#refresh()方法来重启重启容器，是配置生效
 			refreshContext(context);
 			afterRefresh(context, applicationArguments);
+
+			// Spring启动完毕后，打印启动所花费的时间，例如：Started SampleTomcatApplication in 7.383 seconds (JVM running for 8.988)
 			stopWatch.stop();
 			if (this.logStartupInfo) {
 				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
 			}
+
+			// Spring Boot启动完毕：触发启动完毕监听
 			listeners.started(context);
+			// Spring Boot启动完毕后执行CommandLineRunner和ApplicationRunner
 			callRunners(context, applicationArguments);
+
 		} catch (Throwable ex) {
 			handleRunFailure(context, ex, exceptionReporters, listeners);
 			throw new IllegalStateException(ex);
@@ -845,6 +852,20 @@ public class SpringApplication {
 	protected void afterRefresh(ConfigurableApplicationContext context, ApplicationArguments args) {
 	}
 
+	/**
+	 * 如果想要在SpringApplication启动后做一些事情，我们可以实现CommandLineRunner或者ApplicationRunner接口。这2个接口都提供了一个run方法，这个run方法会在SpringApplication.run(…)完成之前被调用。
+	 *
+	 * 另外，需要注意的是，我们可以同时使用多个实现了上述2个（任一）接口的bean，此时必须为这些bean指定顺序：
+	 *
+	 * 让你的bean在实现上述2个（任一）接口的同时实现org.springframework.core.Ordered接口
+	 * 在你的bean上加上@Order注解
+	 * 二者的功能和官方文档一模一样，都是在Spring容器初始化完毕之后执行起run方法。不同点在于，前者的run方法参数是String...args，直接传入字符串；后者的参数是ApplicationArguments，对参数进行了封装。
+	 *
+	 * ApplicationArguments区分选项参数和非选项参数。选项参数是我们可以通过Spring Boot属性处理使用的（如 app.name = Myapp）。它们还可以通过传入逗号分隔列表或多次使用参数来为每个选项包含多个值。非选项参数是我们在命令行传递除了VM参数的所有其他参数。
+	 *
+	 * @param context
+	 * @param args
+	 */
 	private void callRunners(ApplicationContext context, ApplicationArguments args) {
 		List<Object> runners = new ArrayList<>();
 		runners.addAll(context.getBeansOfType(ApplicationRunner.class).values());
@@ -860,6 +881,12 @@ public class SpringApplication {
 		}
 	}
 
+	/**
+	 * 执行ApplicationRunner
+	 *
+	 * @param runner
+	 * @param args
+	 */
 	private void callRunner(ApplicationRunner runner, ApplicationArguments args) {
 		try {
 			(runner).run(args);
@@ -868,6 +895,12 @@ public class SpringApplication {
 		}
 	}
 
+	/**
+	 * 执行CommandLineRunner
+	 *
+	 * @param runner
+	 * @param args
+	 */
 	private void callRunner(CommandLineRunner runner, ApplicationArguments args) {
 		try {
 			(runner).run(args.getSourceArgs());
@@ -876,6 +909,14 @@ public class SpringApplication {
 		}
 	}
 
+	/**
+	 * 如果
+	 *
+	 * @param context
+	 * @param exception
+	 * @param exceptionReporters
+	 * @param listeners
+	 */
 	private void handleRunFailure(ConfigurableApplicationContext context,
 								  Throwable exception,
 								  Collection<SpringBootExceptionReporter> exceptionReporters,
@@ -898,8 +939,7 @@ public class SpringApplication {
 		ReflectionUtils.rethrowRuntimeException(exception);
 	}
 
-	private void reportFailure(Collection<SpringBootExceptionReporter> exceptionReporters,
-							   Throwable failure) {
+	private void reportFailure(Collection<SpringBootExceptionReporter> exceptionReporters, Throwable failure) {
 		try {
 			for (SpringBootExceptionReporter reporter : exceptionReporters) {
 				if (reporter.reportException(failure)) {

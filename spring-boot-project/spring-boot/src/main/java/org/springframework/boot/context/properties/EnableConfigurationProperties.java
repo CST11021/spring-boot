@@ -26,10 +26,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 /**
- * Enable support for {@link ConfigurationProperties} annotated beans.
- * {@link ConfigurationProperties} beans can be registered in the standard way (for
- * example using {@link Bean @Bean} methods) or, for convenience, can be specified
- * directly on this annotation.
+ * 用springboot开发的过程中，我们会用到@ConfigurationProperties注解，主要是用来把properties或者yml配置文件转化为bean来使用。
+ * 而@EnableConfigurationProperties注解的作用是时@ConfigurationProperties注解生效。
+ * 如果只配置@ConfigurationProperties注解，在IOC容器中是获取不到properties配置文件对应的Bean对象，当然在@ConfigurationProperties加入注解的类上加@Component也可以使其注入到IOC容器。
  *
  * @author Dave Syer
  */

@@ -38,6 +38,7 @@ import org.springframework.util.StringUtils;
  */
 class StartupInfoLogger {
 
+	/** 日志所属的资源类 */
 	private final Class<?> sourceClass;
 
 	StartupInfoLogger(Class<?> sourceClass) {
@@ -54,12 +55,22 @@ class StartupInfoLogger {
 		}
 	}
 
+	/**
+	 * Spring启动完毕后，打印启动所花费的时间，例如：Started SampleTomcatApplication in 7.383 seconds (JVM running for 8.988)
+	 * @param log
+	 * @param stopWatch
+	 */
 	public void logStarted(Log log, StopWatch stopWatch) {
 		if (log.isInfoEnabled()) {
 			log.info(getStartedMessage(stopWatch));
 		}
 	}
 
+	/**
+	 * Spring boot启动的第一行日志
+	 *
+	 * @return
+	 */
 	private String getStartupMessage() {
 		StringBuilder message = new StringBuilder();
 		message.append("Starting ");
@@ -80,6 +91,12 @@ class StartupInfoLogger {
 		return message;
 	}
 
+	/**
+	 * 打印启动Spring boot所花费的时间，例如：Started SampleTomcatApplication in 7.383 seconds (JVM running for 8.988)
+	 * 
+	 * @param stopWatch
+	 * @return
+	 */
 	private StringBuilder getStartedMessage(StopWatch stopWatch) {
 		StringBuilder message = new StringBuilder();
 		message.append("Started ");
@@ -97,8 +114,7 @@ class StartupInfoLogger {
 	}
 
 	private String getApplicationName() {
-		return (this.sourceClass != null) ? ClassUtils.getShortName(this.sourceClass)
-				: "application";
+		return (this.sourceClass != null) ? ClassUtils.getShortName(this.sourceClass) : "application";
 	}
 
 	private String getVersion(Class<?> source) {
