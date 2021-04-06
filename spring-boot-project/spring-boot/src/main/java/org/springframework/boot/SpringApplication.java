@@ -157,41 +157,36 @@ import org.springframework.web.context.support.StandardServletEnvironment;
  */
 public class SpringApplication {
 
+	// 一些常量
+
 	/**
 	 * The class name of application context that will be used by default for non-web environments.
 	 */
 	public static final String DEFAULT_CONTEXT_CLASS = "org.springframework.context." + "annotation.AnnotationConfigApplicationContext";
-
 	/**
 	 * The class name of application context that will be used by default for web environments.
 	 */
 	public static final String DEFAULT_WEB_CONTEXT_CLASS = "org.springframework.boot." + "web.servlet.context.AnnotationConfigServletWebServerApplicationContext";
-
 	private static final String[] WEB_ENVIRONMENT_CLASSES = {"javax.servlet.Servlet", "org.springframework.web.context.ConfigurableWebApplicationContext"};
-
 	/**
 	 * The class name of application context that will be used by default for reactive web
 	 * environments.
 	 */
 	public static final String DEFAULT_REACTIVE_WEB_CONTEXT_CLASS = "org.springframework." + "boot.web.reactive.context.AnnotationConfigReactiveWebServerApplicationContext";
-
 	private static final String REACTIVE_WEB_ENVIRONMENT_CLASS = "org.springframework." + "web.reactive.DispatcherHandler";
-
 	private static final String MVC_WEB_ENVIRONMENT_CLASS = "org.springframework." + "web.servlet.DispatcherServlet";
-
 	private static final String JERSEY_WEB_ENVIRONMENT_CLASS = "org.glassfish.jersey.server.ResourceConfig";
-
 	/**
 	 * Default banner location.
 	 */
 	public static final String BANNER_LOCATION_PROPERTY_VALUE = SpringApplicationBannerPrinter.DEFAULT_BANNER_LOCATION;
-
 	/**
 	 * Banner location property key.
 	 */
 	public static final String BANNER_LOCATION_PROPERTY = SpringApplicationBannerPrinter.BANNER_LOCATION_PROPERTY;
-
 	private static final String SYSTEM_PROPERTY_JAVA_AWT_HEADLESS = "java.awt.headless";
+
+
 
 	private static final Log logger = LogFactory.getLog(SpringApplication.class);
 
@@ -199,6 +194,7 @@ public class SpringApplication {
 
 	private Set<String> sources = new LinkedHashSet<>();
 
+	/** 表示SpringBoot启动类的类类型 */
 	private Class<?> mainApplicationClass;
 
 	private Banner.Mode bannerMode = Banner.Mode.CONSOLE;
@@ -209,6 +205,7 @@ public class SpringApplication {
 
 	private boolean addConversionService = true;
 
+	/** Spring Boot启动时的横幅打印类 */
 	private Banner banner;
 
 	private ResourceLoader resourceLoader;
@@ -218,7 +215,7 @@ public class SpringApplication {
 	private ConfigurableEnvironment environment;
 
 	private Class<? extends ConfigurableApplicationContext> applicationContextClass;
-
+	/** WebApplicationType */
 	private WebApplicationType webApplicationType;
 
 	private boolean headless = true;
@@ -236,6 +233,9 @@ public class SpringApplication {
 	private boolean allowBeanDefinitionOverriding;
 
 	private boolean isCustomEnvironment = false;
+
+
+
 
 	/**
 	 * Create a new {@link SpringApplication} instance. The application context will load
@@ -269,14 +269,16 @@ public class SpringApplication {
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		// 推断Spring容器类型
 		this.webApplicationType = deduceWebApplicationType();
+		// SpringFactoriesLoader机制：加载ApplicationContextInitializer实现
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		// SpringFactoriesLoader机制：加载ApplicationContextInitializer实现
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+		// 获取SpringBoot启动类的类类型
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
 
 	/**
-	 * Run the Spring application, creating and refreshing a new
-	 * {@link ApplicationContext}.
+	 * 运行Spring应用程序，创建并刷新一个新的{@link ApplicationContext}.
 	 *
 	 * @param args the application arguments (usually passed from a Java main method)
 	 * @return a running {@link ApplicationContext}
@@ -287,12 +289,13 @@ public class SpringApplication {
 
 		ConfigurableApplicationContext context = null;
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
+		// 设置当前应用程序为Headless模式
 		configureHeadlessProperty();
-
 		// 获取SpringApplicationRunListener
 		SpringApplicationRunListeners listeners = getRunListeners(args);
-		listeners.starting();
 
+		// 开始启动Spring Boot，触发：SpringApplicationRunListener#starting事件
+		listeners.starting();
 		try {
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
@@ -321,6 +324,7 @@ public class SpringApplication {
 			handleRunFailure(context, ex, exceptionReporters, null);
 			throw new IllegalStateException(ex);
 		}
+
 		return context;
 	}
 
@@ -348,6 +352,11 @@ public class SpringApplication {
 		return WebApplicationType.SERVLET;
 	}
 
+	/**
+	 * 获取SpringBoot启动类的类类型
+	 *
+	 * @return
+	 */
 	private Class<?> deduceMainApplicationClass() {
 		try {
 			StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
@@ -391,6 +400,7 @@ public class SpringApplication {
 	private void prepareContext(ConfigurableApplicationContext context, ConfigurableEnvironment environment, SpringApplicationRunListeners listeners, ApplicationArguments applicationArguments, Banner printedBanner) {
 		context.setEnvironment(environment);
 		postProcessApplicationContext(context);
+		// 执行{@link ApplicationContextInitializer}组件
 		applyInitializers(context);
 		listeners.contextPrepared(context);
 		if (this.logStartupInfo) {
@@ -425,6 +435,23 @@ public class SpringApplication {
 		}
 	}
 
+	/**
+	 * Headless模式是应用的一种配置模式。在服务器可能缺少显示设备、键盘、鼠标等外设的情况下可以使用这种模式。
+	 * 在java.awt.toolkit和java.awt.graphicsenvironment类中的很多方法，除了对字体、图形和打印的操作外还需要调用显示器、键盘和鼠标等设备。但是有一些类，比如 Canvas和 Panel，是可以在headless模式下执行的。
+	 * 在headless模式下，(awt)应用程序可以执行如下操作：
+	 *
+	 * 创建轻量级组件
+	 * 收集关于可用的字体、字体指标和字体设置的信息
+	 * 设置颜色来渲染准备图片
+	 * 创造和获取图像，为渲染准备图片
+	 * 使用java.awt.PrintJob,java.awt.print.*,和javax.print.*类里的打印操作
+	 * 简单来说，headless模式是一种声明：现在不要指望硬件的支持了，只能使用系统的运算能力来做些非可视化的处理工作。
+	 *
+	 *
+	 * 关于这个配置在性能上的影响：
+	 * 如果应用不需要任何head，那么有无这个配置没有任何影响；
+	 * 如果应用有弹出窗口之类的操作，那么在headless模式下这种操作会被阻止。
+	 */
 	private void configureHeadlessProperty() {
 		System.setProperty(SYSTEM_PROPERTY_JAVA_AWT_HEADLESS, System.getProperty(
 				SYSTEM_PROPERTY_JAVA_AWT_HEADLESS, Boolean.toString(this.headless)));
@@ -659,8 +686,10 @@ public class SpringApplication {
 	}
 
 	/**
-	 * Apply any {@link ApplicationContextInitializer}s to the context before it is
-	 * refreshed.
+	 * 执行{@link ApplicationContextInitializer}组件（在ConfigurableApplicationContext#refresh()方法之前前调用该方法）
+	 *
+	 * 如果我们真的需要自定义一个ApplicationContextInitializer，那么需要实现ApplicationContextInitializer接口，
+	 * 并且通过SpringFactoriesLoader机制进行配置，或者通过SpringApplication.addInitializers(.)设置。
 	 *
 	 * @param context the configured ApplicationContext (not refreshed yet)
 	 * @see ConfigurableApplicationContext#refresh()
@@ -668,8 +697,7 @@ public class SpringApplication {
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	protected void applyInitializers(ConfigurableApplicationContext context) {
 		for (ApplicationContextInitializer initializer : getInitializers()) {
-			Class<?> requiredType = GenericTypeResolver.resolveTypeArgument(
-					initializer.getClass(), ApplicationContextInitializer.class);
+			Class<?> requiredType = GenericTypeResolver.resolveTypeArgument(initializer.getClass(), ApplicationContextInitializer.class);
 			Assert.isInstanceOf(requiredType, context, "Unable to call initializer.");
 			initializer.initialize(context);
 		}

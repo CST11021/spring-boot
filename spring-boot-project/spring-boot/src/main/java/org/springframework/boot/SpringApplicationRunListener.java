@@ -22,11 +22,24 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
- * Listener for the {@link SpringApplication} {@code run} method.
- * {@link SpringApplicationRunListener}s are loaded via the {@link SpringFactoriesLoader}
- * and should declare a public constructor that accepts a {@link SpringApplication}
- * instance and a {@code String[]} of arguments. A new
- * {@link SpringApplicationRunListener} instance will be created for each run.
+ *
+ * SpringApplicationRunListener是SpringBoot应用main方法执行过程中接收不同执行时点事件通知的监听者。
+ *
+ * 对于我们来说，基本没什么常见的场景需要自己实现一个SpringApplicationRunListener，即使SpringBoot默认也只是实现了一个
+ * org.springframework.boot.context.event.EventPublishingRunListener，用于在SpringBoot启动的不同时点发布不同的应用事件类型(ApplicationEvent)，
+ * 如果有哪些ApplicationListener对这些应用事件感兴趣，则可以接收并处理。
+ *
+ * 假设我们真的有场景需要自定义一个SpringApplicationRunListener实现，那么有一点需要注意，即任何一个SpringApplicationRunListener实现类的构
+ * 造方法需要有两个构造参数，一个构造参数是：org.springframework.boot.SpringApplication，另外一个是args参数列表的String[]：
+ *
+ * public class DemoSpringApplicationRunLinstener implements SpringApplicationRunListener {
+ * 	// 省略。。。
+ * }
+ *
+ * 之后，我们可以通过SpringFactoriesLoader立下的规矩，在当前SpringBoot 应用的classpath下的META-INF/spring. factories文件中进行类似如下的配置:
+ * org.springframework.boot.SpringApplicationRunListener=\
+ * com.keevol.springboot.demo.DemoSpringApplicationRunListener
+ * 然后SpringApplication就会在运行的时候调用它啦!
  *
  * @author Phillip Webb
  * @author Dave Syer

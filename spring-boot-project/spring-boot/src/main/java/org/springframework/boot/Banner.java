@@ -21,7 +21,7 @@ import java.io.PrintStream;
 import org.springframework.core.env.Environment;
 
 /**
- * Interface class for writing a banner programmatically.
+ * 用于以编程方式编写横幅的接口类
  *
  * @author Phillip Webb
  * @author Michael Stummvoll
