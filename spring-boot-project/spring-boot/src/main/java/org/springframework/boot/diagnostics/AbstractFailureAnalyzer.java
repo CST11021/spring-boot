@@ -48,14 +48,13 @@ public abstract class AbstractFailureAnalyzer<T extends Throwable>
 	protected abstract FailureAnalysis analyze(Throwable rootFailure, T cause);
 
 	/**
-	 * Return the cause type being handled by the analyzer. By default the class generic
-	 * is used.
+	 * 返回分析仪正在处理的原因类型。默认情况下，使用通用类。
+	 *
 	 * @return the cause type
 	 */
 	@SuppressWarnings("unchecked")
 	protected Class<? extends T> getCauseType() {
-		return (Class<? extends T>) ResolvableType
-				.forClass(AbstractFailureAnalyzer.class, getClass()).resolveGeneric();
+		return (Class<? extends T>) ResolvableType.forClass(AbstractFailureAnalyzer.class, getClass()).resolveGeneric();
 	}
 
 	@SuppressWarnings("unchecked")

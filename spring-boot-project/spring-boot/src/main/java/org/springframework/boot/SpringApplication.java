@@ -302,6 +302,7 @@ public class SpringApplication {
 			configureIgnoreBeanInfo(environment);
 			Banner printedBanner = printBanner(environment);
 			context = createApplicationContext();
+			// 根据spring.factories配置获取SpringBootExceptionReporter这个类型的Bean实例
 			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class, new Class[]{ConfigurableApplicationContext.class}, context);
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
 
@@ -828,8 +829,7 @@ public class SpringApplication {
 	 * @param sources  the sources to load
 	 * @return the {@link BeanDefinitionLoader} that will be used to load beans
 	 */
-	protected BeanDefinitionLoader createBeanDefinitionLoader(
-			BeanDefinitionRegistry registry, Object[] sources) {
+	protected BeanDefinitionLoader createBeanDefinitionLoader(BeanDefinitionRegistry registry, Object[] sources) {
 		return new BeanDefinitionLoader(registry, sources);
 	}
 
@@ -969,8 +969,7 @@ public class SpringApplication {
 		}
 	}
 
-	private void handleExitCode(ConfigurableApplicationContext context,
-								Throwable exception) {
+	private void handleExitCode(ConfigurableApplicationContext context, Throwable exception) {
 		int exitCode = getExitCodeFromException(context, exception);
 		if (exitCode != 0) {
 			if (context != null) {
@@ -983,8 +982,7 @@ public class SpringApplication {
 		}
 	}
 
-	private int getExitCodeFromException(ConfigurableApplicationContext context,
-										 Throwable exception) {
+	private int getExitCodeFromException(ConfigurableApplicationContext context, Throwable exception) {
 		int exitCode = getExitCodeFromMappedException(context, exception);
 		if (exitCode == 0) {
 			exitCode = getExitCodeFromExitCodeGeneratorException(exception);
@@ -992,8 +990,7 @@ public class SpringApplication {
 		return exitCode;
 	}
 
-	private int getExitCodeFromMappedException(ConfigurableApplicationContext context,
-											   Throwable exception) {
+	private int getExitCodeFromMappedException(ConfigurableApplicationContext context, Throwable exception) {
 		if (context == null || !context.isActive()) {
 			return 0;
 		}
@@ -1290,8 +1287,7 @@ public class SpringApplication {
 	 *
 	 * @param applicationContextClass the context class to set
 	 */
-	public void setApplicationContextClass(
-			Class<? extends ConfigurableApplicationContext> applicationContextClass) {
+	public void setApplicationContextClass(Class<? extends ConfigurableApplicationContext> applicationContextClass) {
 		this.applicationContextClass = applicationContextClass;
 		if (!isWebApplicationContext(applicationContextClass)) {
 			this.webApplicationType = WebApplicationType.NONE;
@@ -1312,8 +1308,7 @@ public class SpringApplication {
 	 *
 	 * @param initializers the initializers to set
 	 */
-	public void setInitializers(
-			Collection<? extends ApplicationContextInitializer<?>> initializers) {
+	public void setInitializers(Collection<? extends ApplicationContextInitializer<?>> initializers) {
 		this.initializers = new ArrayList<>();
 		this.initializers.addAll(initializers);
 	}
@@ -1408,15 +1403,13 @@ public class SpringApplication {
 	 * @param exitCodeGenerators exist code generators
 	 * @return the outcome (0 if successful)
 	 */
-	public static int exit(ApplicationContext context,
-						   ExitCodeGenerator... exitCodeGenerators) {
+	public static int exit(ApplicationContext context, ExitCodeGenerator... exitCodeGenerators) {
 		Assert.notNull(context, "Context must not be null");
 		int exitCode = 0;
 		try {
 			try {
 				ExitCodeGenerators generators = new ExitCodeGenerators();
-				Collection<ExitCodeGenerator> beans = context
-						.getBeansOfType(ExitCodeGenerator.class).values();
+				Collection<ExitCodeGenerator> beans = context.getBeansOfType(ExitCodeGenerator.class).values();
 				generators.addAll(exitCodeGenerators);
 				generators.addAll(beans);
 				exitCode = generators.getExitCode();
@@ -1433,6 +1426,11 @@ public class SpringApplication {
 		return exitCode;
 	}
 
+	/**
+	 * 关闭spring boot容器
+	 *
+	 * @param context
+	 */
 	private static void close(ApplicationContext context) {
 		if (context instanceof ConfigurableApplicationContext) {
 			ConfigurableApplicationContext closable = (ConfigurableApplicationContext) context;
@@ -1440,6 +1438,13 @@ public class SpringApplication {
 		}
 	}
 
+	/**
+	 * 对集合内的元素进行排序
+	 *
+	 * @param elements
+	 * @param <E>
+	 * @return
+	 */
 	private static <E> Set<E> asUnmodifiableOrderedSet(Collection<E> elements) {
 		List<E> list = new ArrayList<>();
 		list.addAll(elements);

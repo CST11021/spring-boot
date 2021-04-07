@@ -66,18 +66,21 @@ final class FailureAnalyzers implements SpringBootExceptionReporter {
 		prepareFailureAnalyzers(this.analyzers, context);
 	}
 
+	@Override
+	public boolean reportException(Throwable failure) {
+		FailureAnalysis analysis = analyze(failure, this.analyzers);
+		return report(analysis, this.classLoader);
+	}
+
 	private List<FailureAnalyzer> loadFailureAnalyzers(ClassLoader classLoader) {
-		List<String> analyzerNames = SpringFactoriesLoader
-				.loadFactoryNames(FailureAnalyzer.class, classLoader);
+		List<String> analyzerNames = SpringFactoriesLoader.loadFactoryNames(FailureAnalyzer.class, classLoader);
 		List<FailureAnalyzer> analyzers = new ArrayList<>();
 		for (String analyzerName : analyzerNames) {
 			try {
-				Constructor<?> constructor = ClassUtils.forName(analyzerName, classLoader)
-						.getDeclaredConstructor();
+				Constructor<?> constructor = ClassUtils.forName(analyzerName, classLoader).getDeclaredConstructor();
 				ReflectionUtils.makeAccessible(constructor);
 				analyzers.add((FailureAnalyzer) constructor.newInstance());
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				logger.trace("Failed to load " + analyzerName, ex);
 			}
 		}
@@ -85,27 +88,19 @@ final class FailureAnalyzers implements SpringBootExceptionReporter {
 		return analyzers;
 	}
 
-	private void prepareFailureAnalyzers(List<FailureAnalyzer> analyzers,
-			ConfigurableApplicationContext context) {
+	private void prepareFailureAnalyzers(List<FailureAnalyzer> analyzers, ConfigurableApplicationContext context) {
 		for (FailureAnalyzer analyzer : analyzers) {
 			prepareAnalyzer(context, analyzer);
 		}
 	}
 
-	private void prepareAnalyzer(ConfigurableApplicationContext context,
-			FailureAnalyzer analyzer) {
+	private void prepareAnalyzer(ConfigurableApplicationContext context, FailureAnalyzer analyzer) {
 		if (analyzer instanceof BeanFactoryAware) {
 			((BeanFactoryAware) analyzer).setBeanFactory(context.getBeanFactory());
 		}
 		if (analyzer instanceof EnvironmentAware) {
 			((EnvironmentAware) analyzer).setEnvironment(context.getEnvironment());
 		}
-	}
-
-	@Override
-	public boolean reportException(Throwable failure) {
-		FailureAnalysis analysis = analyze(failure, this.analyzers);
-		return report(analysis, this.classLoader);
 	}
 
 	private FailureAnalysis analyze(Throwable failure, List<FailureAnalyzer> analyzers) {
@@ -115,8 +110,7 @@ final class FailureAnalyzers implements SpringBootExceptionReporter {
 				if (analysis != null) {
 					return analysis;
 				}
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				logger.debug("FailureAnalyzer " + analyzer + " failed", ex);
 			}
 		}
@@ -124,11 +118,11 @@ final class FailureAnalyzers implements SpringBootExceptionReporter {
 	}
 
 	private boolean report(FailureAnalysis analysis, ClassLoader classLoader) {
-		List<FailureAnalysisReporter> reporters = SpringFactoriesLoader
-				.loadFactories(FailureAnalysisReporter.class, classLoader);
+		List<FailureAnalysisReporter> reporters = SpringFactoriesLoader.loadFactories(FailureAnalysisReporter.class, classLoader);
 		if (analysis == null || reporters.isEmpty()) {
 			return false;
 		}
+
 		for (FailureAnalysisReporter reporter : reporters) {
 			reporter.report(analysis);
 		}
